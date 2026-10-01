@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foodie - Online Food Ordering</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-box">
+            <h3 id="modal-title">Confirm</h3>
+            <p id="modal-message">Are you sure?</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                <button class="btn btn-primary" id="modal-confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="image-modal" class="modal-overlay" onclick="closeImageModal(event)">
+        <div class="image-preview-large">
+            <img id="preview-large-img" src="" alt="Preview">
+            <button class="close-preview" onclick="closeImageModal()"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+
+    
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo" onclick="navigate('home')">
+            <i class="fas fa-burger"></i> Foodie
+        </div>
+        <div class="nav-links" id="nav-links"></div>
+    </nav>
+
+    <div class="page active" id="page-home">
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">Fresh & Delicious</div>
+                <h1>Delicious Food <span>Delivered To You</span></h1>
+                <p>Order your favourite food from the best restaurants around you. Fast delivery, great taste.</p>
+                <div class="hero-actions">
+                    <button class="btn btn-primary btn-lg" onclick="navigate('restaurants')">
+                        <i class="fas fa-utensils"></i> Order Now
+                    </button>
+                    <button class="btn btn-secondary btn-lg" onclick="navigate('admin-login')">
+                        <i class="fas fa-shield-halved"></i> Admin Panel
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=500&fit=crop" alt="Delicious food spread" class="hero-image">
+            </div>
+        </section>
+    </div>
+
+    
+    <div class="page" id="page-restaurants">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Restaurants</h1>
+                    <p>Choose from our selection of restaurants</p>
+                </div>
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="restaurant-search" placeholder="Search restaurants..." oninput="filterRestaurants()">
+                </div>
+            </div>
+            <div id="restaurants-grid" class="restaurant-grid"></div>
+        </div>
+    </div>
+
+    
+    <div class="page" id="page-restaurant-detail">
+        <div class="container">
+            <button class="back-btn" onclick="navigate('restaurants')">
+                <i class="fas fa-arrow-left"></i> Back to Restaurants
+            </button>
+            <div id="restaurant-detail-content"></div>
+        </div>
+    </div>
+
+    
+    <div class="page" id="page-cart">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>Your Cart</h1>
+                    <p>Review your items before placing order</p>
+                </div>
+            </div>
+            <div id="cart-content"></div>
+        </div>
+    </div>
+
+   
+    <div class="page" id="page-orders">
+        <div class="container">
+            <div class="page-header">
+                <div>
+                    <h1>My Orders</h1>
+                    <p>Track your order status</p>
+                </div>
+                <button class="btn btn-secondary" onclick="loadOrders()">
+                    <i class="fas fa-refresh"></i> Refresh
+                </button>
+            </div>
+            <div id="orders-content"></div>
+        </div>
+    </div>
+
+    
+    <div class="page" id="page-login">
+        <div class="auth-wrapper">
+            <div class="auth-card">
+                <div class="auth-icon">🍔</div>
+                <h1>Welcome to Foodie</h1>
+                <p class="auth-subtitle">Login to order your favourite food</p>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="login-name">Name</label>
+                        <input type="text" id="login-name" placeholder="Enter your name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-email">Email</label>
+                        <input type="email" id="login-email" placeholder="Enter your email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg full-width">
+                        <i class="fas fa-right-to-bracket"></i> Login
+                    </button>
+                </form>
+                <div id="login-message"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="page" id="page-admin-login">
+        <div class="auth-wrapper">
+            <div class="auth-card admin-auth">
+                <div class="auth-icon"><i class="fas fa-shield-halved"></i></div>
+                <h1>Admin Access</h1>
+                <p class="auth-subtitle">Manage restaurants, foods and orders</p>
+                <form id="admin-login-form">
+                    <div class="form-group">
+                        <label for="admin-email">Email</label>
+                        <input type="email" id="admin-email" placeholder="admin@foodie.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-password">Password</label>
+                        <input type="password" id="admin-password" placeholder="Enter password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg full-width">
+                        <i class="fas fa-lock"></i> Admin Login
+                    </button>
+                </form>
+                <div id="admin-login-message"></div>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="page" id="page-admin">
+        <div class="container-wide">
+            <div class="admin-header">
+                <div>
+                    <h1>Admin Dashboard</h1>
+                    <p>Manage restaurants, food items and orders</p>
+                </div>
+                <button class="btn btn-secondary" onclick="adminLogout()">
+                    <i class="fas fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('dashboard', this)">
+                    <i class="fas fa-chart-pie"></i> Dashboard
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('add-restaurant', this)">
+                    <i class="fas fa-store"></i> Add Restaurant
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('add-food', this)">
+                    <i class="fas fa-utensils"></i> Add Food
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('manage-restaurants', this)">
+                    <i class="fas fa-list"></i> Restaurants
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('manage-foods', this)">
+                    <i class="fas fa-bowl-food"></i> Foods
+                </button>
+                <button class="admin-tab" onclick="switchAdminTab('manage-orders', this)">
+                    <i class="fas fa-box"></i> Orders
+                </button>
+            </div>
+
+           
+            <div class="admin-tab-content active" id="tab-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card stat-users">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-users">0</h3>
+                            <p>Users</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-restaurants">
+                        <div class="stat-icon"><i class="fas fa-store"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-restaurants">0</h3>
+                            <p>Restaurants</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-foods">
+                        <div class="stat-icon"><i class="fas fa-utensils"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-foods">0</h3>
+                            <p>Foods</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-orders">
+                        <div class="stat-icon"><i class="fas fa-box"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-orders">0</h3>
+                            <p>Orders</p>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-sales">
+                        <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+                        <div class="stat-info">
+                            <h3 id="stat-sales">₹0.00</h3>
+                            <p>Total Sales</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tab-content" id="tab-add-restaurant">
+                <div class="admin-form-card">
+                    <h2><i class="fas fa-store"></i> Add New Restaurant</h2>
+                    <form id="restaurant-form">
+                        <div class="form-group">
+                            <label for="restaurant-name">Restaurant Name *</label>
+                            <input type="text" id="restaurant-name" placeholder="Enter restaurant name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-location">Location *</label>
+                            <input type="text" id="restaurant-location" placeholder="Enter location" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Restaurant Image</label>
+                            <div class="upload-area" id="restaurant-upload" onclick="document.getElementById('restaurant-image').click()">
+                                <input type="file" id="restaurant-image" accept="image/*" hidden onchange="previewImage(this, 'restaurant-preview')">
+                                <div id="restaurant-preview" class="upload-preview">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload image</p>
+                                    <span>Supports: JPG, PNG, WebP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="restaurant-image-url">Or Image URL</label>
+                            <input type="text" id="restaurant-image-url" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus"></i> Add Restaurant
+                        </button>
+                    </form>
+                    <div id="restaurant-message" class="message-area"></div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tab-content" id="tab-add-food">
+                <div class="admin-form-card">
+                    <h2><i class="fas fa-utensils"></i> Add New Food Item</h2>
+                    <form id="food-form">
+                        <div class="form-group">
+                            <label for="food-name">Food Name *</label>
+                            <input type="text" id="food-name" placeholder="Enter food name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="food-description">Description *</label>
+                            <textarea id="food-description" rows="3" placeholder="Enter food description" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="food-price">Price (₹) *</label>
+                                <input type="number" id="food-price" min="1" step="0.01" placeholder="0.00" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="food-category">Category *</label>
+                                <input type="text" id="food-category" placeholder="Pizza, Burger, etc." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="food-restaurant">Restaurant *</label>
+                            <select id="food-restaurant" required>
+                                <option value="">Select Restaurant</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Food Image</label>
+                            <div class="upload-area" id="food-upload" onclick="document.getElementById('food-image').click()">
+                                <input type="file" id="food-image" accept="image/*" hidden onchange="previewImage(this, 'food-preview')">
+                                <div id="food-preview" class="upload-preview">
+                                    <i class="fas fa-cloud-upload-alt"></i>
+                                    <p>Click to upload image</p>
+                                    <span>Supports: JPG, PNG, WebP</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="food-image-url">Or Image URL</label>
+                            <input type="text" id="food-image-url" placeholder="https://example.com/image.jpg">
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-plus"></i> Add Food
+                        </button>
+                    </form>
+                    <div id="food-message" class="message-area"></div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tab-content" id="tab-manage-restaurants">
+                <div class="admin-list-card">
+                    <div class="list-header">
+                        <h2>All Restaurants</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="loadAdminRestaurants()">
+                            <i class="fas fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="admin-restaurants-list"></div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tab-content" id="tab-manage-foods">
+                <div class="admin-list-card">
+                    <div class="list-header">
+                        <h2>All Foods</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="loadAdminFoods()">
+                            <i class="fas fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="admin-foods-list"></div>
+                </div>
+            </div>
+
+            
+            <div class="admin-tab-content" id="tab-manage-orders">
+                <div class="admin-list-card">
+                    <div class="list-header">
+                        <h2>All Orders</h2>
+                        <button class="btn btn-secondary btn-sm" onclick="loadAdminOrders()">
+                            <i class="fas fa-refresh"></i> Refresh
+                        </button>
+                    </div>
+                    <div id="admin-orders-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
